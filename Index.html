@@ -1,0 +1,322 @@
+<!DOCTYPE html>
+<html lang="en" id="html-tag">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Mohammed Fahed | Premium Design</title>
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700&family=Inter:wght@300;400;600&family=Noto+Sans+Arabic:wght@400;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        :root {
+            --primary: #8b5cf6; --dark-bg: #030303; --surface: #0a0a0a;
+            --glass-border: rgba(255, 255, 255, 0.08); --neon: 0 0 25px rgba(139, 92, 246, 0.5);
+        }
+        * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+        body { font-family: 'Inter', 'Noto Sans Arabic', sans-serif; background: var(--dark-bg); color: white; margin: 0; overflow-x: hidden; }
+        [lang="ar"] { direction: rtl; }
+
+        /* --- SOUNDS --- */
+        /* Hidden audio players */
+        audio { display: none; }
+
+        /* --- ANIMATIONS --- */
+        @keyframes jelly { 0% { transform: scale(0.9, 0.9); opacity: 0; } 50% { transform: scale(1.05, 0.95); opacity: 1; } 100% { transform: scale(1, 1); } }
+        @keyframes float { 0% { transform: translateY(0px); } 50% { transform: translateY(-10px); } 100% { transform: translateY(0px); } }
+        @keyframes glowText { 0% { text-shadow: 0 0 5px var(--primary); } 50% { text-shadow: 0 0 20px var(--primary), 0 0 40px #d8b4fe; } 100% { text-shadow: 0 0 5px var(--primary); } }
+
+        #loader { position: fixed; inset: 0; background: #000; z-index: 9999; display: flex; justify-content: center; align-items: center; transition: 0.5s; pointer-events: none; }
+        
+        nav { padding: 15px 5%; display: flex; justify-content: space-between; align-items: center; background: rgba(0,0,0,0.8); backdrop-filter: blur(15px); position: sticky; top: 0; z-index: 100; border-bottom: 1px solid var(--glass-border); }
+        
+        .hero { padding: 80px 5%; text-align: center; min-height: 70vh; display: flex; flex-direction: column; justify-content: center; }
+        .hero h1 { animation: float 6s ease-in-out infinite; }
+
+        /* Modal & Cards */
+        .modal { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.98); z-index: 1000; align-items: center; justify-content: center; padding: 20px; animation: jelly 0.5s ease; }
+        .login-card { background: var(--surface); padding: 40px; border-radius: 30px; width: 100%; max-width: 400px; border: 1px solid var(--primary); box-shadow: var(--neon); }
+        input { width: 100%; padding: 15px; margin: 10px 0; background: #000; border: 1px solid #222; color: white; border-radius: 12px; font-size: 16px; transition: 0.3s; }
+        input:focus { border-color: var(--primary); box-shadow: 0 0 15px rgba(139, 92, 246, 0.3); }
+
+        /* Credits Page */
+        #credits-ui { display: none; height: 100vh; flex-direction: column; justify-content: center; align-items: center; text-align: center; background: radial-gradient(circle, #1a0b2e 0%, #000 100%); }
+        .credits-name { font-family: 'Playfair Display', serif; font-size: 3rem; color: var(--primary); animation: glowText 3s infinite; margin: 20px 0; }
+
+        /* Chat UI */
+        #portal-ui { display: none; height: 100vh; flex-direction: column; }
+        .main-app { display: flex; flex: 1; overflow: hidden; position: relative; }
+        .sidebar { width: 320px; background: #050505; border-right: 1px solid var(--glass-border); display: none; flex-direction: column; }
+        
+        @media (max-width: 768px) {
+            .sidebar { position: absolute; left: 0; top: 0; bottom: 0; width: 85%; transform: translateX(-100%); transition: 0.3s; z-index: 100; }
+            .sidebar.open { transform: translateX(0); }
+            [lang="ar"] .sidebar { left: auto; right: 0; transform: translateX(100%); }
+            [lang="ar"] .sidebar.open { transform: translateX(0); }
+        }
+
+        .user-tab { padding: 18px 20px; border-bottom: 1px solid #111; cursor: pointer; display: flex; justify-content: space-between; align-items: center; transition: 0.2s; }
+        .user-tab:hover { background: rgba(139, 92, 246, 0.1); }
+        .user-tab.active { background: rgba(139, 92, 246, 0.2); border-left: 4px solid var(--primary); }
+
+        .chat-view { flex: 1; display: flex; flex-direction: column; background: #000; }
+        .messages { flex: 1; padding: 20px; overflow-y: auto; display: flex; flex-direction: column; gap: 15px; }
+        
+        .bubble { padding: 12px 18px; border-radius: 20px; max-width: 85%; animation: jelly 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275); position: relative; }
+        .bubble.client { align-self: flex-end; background: linear-gradient(135deg, var(--primary), #6d28d9); box-shadow: 0 5px 15px rgba(139, 92, 246, 0.3); }
+        .bubble.admin { align-self: flex-start; background: #1a1a1a; border: 1px solid #333; }
+
+        .input-area { padding: 15px; background: #0a0a0a; display: flex; gap: 10px; border-top: 1px solid var(--glass-border); }
+        .btn { padding: 12px 25px; border-radius: 50px; border: none; font-weight: 600; cursor: pointer; transition: 0.3s; display: inline-block; }
+        .btn-p { background: var(--primary); color: white; box-shadow: var(--neon); }
+        .btn-p:active { transform: scale(0.95); }
+    </style>
+</head>
+<body>
+
+<audio id="bgMusic" loop>
+    <source src="https://cdn.pixabay.com/audio/2022/05/27/audio_1808fbf07a.mp3" type="audio/mpeg">
+</audio>
+<audio id="msgSound">
+    <source src="https://assets.mixkit.co/active_storage/sfx/2346/2346-preview.mp3" type="audio/mpeg">
+</audio>
+
+<div id="loader"><div style="font-family:'Playfair Display'; font-size:2rem; color:var(--primary);">M. FAHED</div></div>
+
+<div id="landing-ui">
+    <nav>
+        <div style="font-family:'Playfair Display'; font-size:1.4rem; color:var(--primary);">M. FAHED</div>
+        <div style="display:flex; gap:10px; align-items:center;">
+            <a href="https://www.instagram.com/7_mo7_7" target="_blank" style="color:white; font-size:1.2rem;"><i class="fab fa-instagram"></i></a>
+            <button class="btn" style="background:rgba(255,255,255,0.1); color:white; font-size:0.8rem;" id="creditsBtn">Credits</button>
+            <button class="btn" style="background:rgba(255,255,255,0.1); color:white;" id="langBtn">العربية</button>
+            <button class="btn btn-p" id="navLoginBtn">Portal</button>
+        </div>
+    </nav>
+    <section class="hero">
+        <h1 id="heroH" style="font-family:'Playfair Display'; font-size:3rem;">Creative Vision.</h1>
+        <p id="heroP">Luxury branding and digital architecture. I design anything you want with elite precision.</p>
+        <button class="btn btn-p" id="heroBtn" style="width:200px; margin:0 auto;">Start Project</button>
+    </section>
+</div>
+
+<div id="credits-ui">
+    <h2 style="color:#fff; font-size:1.5rem; opacity:0.8;">SITE WAS MADE BY</h2>
+    <div class="credits-name">Mohammed Anwer</div>
+    <p style="color:#94a3b8; margin-bottom:40px;">Elite Web Architecture & Development</p>
+    <button class="btn btn-p" id="backHomeBtn">Return Home</button>
+</div>
+
+<div class="modal" id="loginModal">
+    <div class="login-card">
+        <h2 id="loginH" style="margin:0 0 20px 0;">Portal Access</h2>
+        <input type="text" id="username" placeholder="Name">
+        <input type="password" id="password" placeholder="Key">
+        <button class="btn btn-p" style="width:100%;" id="loginSubmit">Authorize</button>
+        <button class="btn" style="width:100%; background:transparent; color:#666;" id="closeLoginBtn">Cancel</button>
+    </div>
+</div>
+
+<div id="portal-ui">
+    <header style="padding:15px; background:#000; display:flex; justify-content:space-between; border-bottom:1px solid var(--glass-border);">
+        <div style="display:flex; align-items:center;">
+            <button class="btn" id="menuBtn" style="background:var(--primary); margin-right:10px; display:none; padding:5px 15px;">☰</button>
+            <span id="portalTitle" style="color:var(--primary); font-weight:bold;">WORKSPACE</span>
+        </div>
+        <button class="btn" style="background:#450a0a; color:white;" id="logoutBtn">EXIT</button>
+    </header>
+    <div class="main-app">
+        <aside class="sidebar" id="sidebar">
+            <div id="userList"></div>
+        </aside>
+        <main class="chat-view">
+            <div class="messages" id="msgDisplay"></div>
+            <div class="input-area">
+                <input type="text" id="msgInput" placeholder="...">
+                <button class="btn btn-p" id="sendBtn">Send</button>
+            </div>
+        </main>
+    </div>
+</div>
+
+<script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
+    import { getDatabase, ref, push, onValue, remove, update } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-database.js";
+
+    const firebaseConfig = {
+        apiKey: "AIzaSyCTd1n2hjcKSFLk7Xl8saeRpBS_nfpL9i8",
+        authDomain: "mohammmed-fahad.firebaseapp.com",
+        databaseURL: "https://mohammmed-fahad-default-rtdb.firebaseio.com",
+        projectId: "mohammmed-fahad",
+        storageBucket: "mohammmed-fahad.firebasestorage.app",
+        messagingSenderId: "576848827662",
+        appId: "1:576848827662:web:f6f36ea0ae2d4b95e1335f"
+    };
+
+    const app = initializeApp(firebaseConfig);
+    const db = getDatabase(app);
+
+    let lang = 'en';
+    let currentUser = "";
+    let isAdmin = false;
+    let selectedUser = "";
+    let musicStarted = false;
+
+    // AUDIO HELPERS
+    function playSound() {
+        const sound = document.getElementById('msgSound');
+        sound.currentTime = 0;
+        sound.play().catch(e => console.log("Sound blocked by browser until interaction"));
+    }
+
+    function startMusic() {
+        if(!musicStarted) {
+            const bg = document.getElementById('bgMusic');
+            bg.volume = 0.3; // Lower volume so it's not annoying
+            bg.play().catch(e => console.log("Music waiting for interaction"));
+            musicStarted = true;
+        }
+    }
+
+    const dict = {
+        en: { lang: "العربية", navL: "Portal", heroH: "Creative Vision.", heroP: "Luxury branding and digital architecture. I design anything you want with elite precision.", heroB: "Start Project", loginH: "Portal Access", loginB: "Authorize", logoutB: "EXIT", sendB: "Send" },
+        ar: { lang: "English", navL: "البوابة", heroH: "رؤية إبداعية", heroP: "هوية تجارية فاخرة وهندسة رقمية. أصمم لك أي شيء تريده بدقة متناهية.", heroB: "ابدأ مشروعك", loginH: "دخول البوابة", loginB: "دخول", logoutB: "خروج", sendB: "إرسال" }
+    };
+
+    // --- GLOBAL CLICK HANDLER ---
+    document.addEventListener('click', (e) => {
+        // Start music on first click anywhere
+        startMusic();
+
+        const id = e.target.id;
+        
+        if(id === 'langBtn') {
+            lang = lang === 'en' ? 'ar' : 'en';
+            document.getElementById('html-tag').setAttribute('lang', lang);
+            const d = dict[lang];
+            document.getElementById('langBtn').innerText = d.lang;
+            document.getElementById('navLoginBtn').innerText = d.navL;
+            document.getElementById('heroH').innerText = d.heroH;
+            document.getElementById('heroP').innerText = d.heroP;
+            document.getElementById('heroBtn').innerText = d.heroB;
+            document.getElementById('loginH').innerText = d.loginH;
+            document.getElementById('loginSubmit').innerText = d.loginB;
+            document.getElementById('portalTitle').innerText = lang === 'en' ? "WORKSPACE" : "مساحة العمل";
+            document.getElementById('logoutBtn').innerText = d.logoutB;
+            document.getElementById('sendBtn').innerText = d.sendB;
+        }
+
+        // Credits Navigation
+        if(id === 'creditsBtn') {
+            document.getElementById('landing-ui').style.display = 'none';
+            document.getElementById('credits-ui').style.display = 'flex';
+        }
+        if(id === 'backHomeBtn') {
+            document.getElementById('credits-ui').style.display = 'none';
+            document.getElementById('landing-ui').style.display = 'block';
+        }
+
+        if(id === 'navLoginBtn' || id === 'heroBtn') {
+            document.getElementById('loginModal').style.display = 'flex';
+        }
+
+        if(id === 'closeLoginBtn') {
+            document.getElementById('loginModal').style.display = 'none';
+        }
+
+        if(id === 'logoutBtn') {
+            location.reload();
+        }
+
+        if(id === 'menuBtn') {
+            document.getElementById('sidebar').classList.toggle('open');
+        }
+
+        if(id === 'loginSubmit') {
+            const u = document.getElementById('username').value.trim();
+            const p = document.getElementById('password').value;
+            if(!u) return;
+            currentUser = u;
+            isAdmin = (u === "admin" && p === "admin");
+            document.getElementById('landing-ui').style.display = 'none';
+            document.getElementById('loginModal').style.display = 'none';
+            document.getElementById('portal-ui').style.display = 'flex';
+            if(isAdmin) {
+                document.getElementById('sidebar').style.display = 'flex';
+                document.getElementById('menuBtn').style.display = 'block';
+                listenToAll();
+            } else {
+                selectedUser = currentUser;
+                listenToChat(currentUser);
+            }
+        }
+
+        if(id === 'sendBtn') {
+            const input = document.getElementById('msgInput');
+            if(!input.value.trim() || !selectedUser) return;
+            // Play send sound immediately
+            playSound();
+            push(ref(db, 'chats/' + selectedUser), { sender: isAdmin ? 'admin' : 'client', text: input.value, read: false, time: Date.now() });
+            input.value = "";
+        }
+
+        if(e.target.classList.contains('del-chat')) {
+            const u = e.target.dataset.user;
+            if(confirm(`Delete ${u}?`)) remove(ref(db, 'chats/' + u));
+        }
+
+        if(e.target.closest('.user-tab') && !e.target.classList.contains('del-chat')) {
+            const tab = e.target.closest('.user-tab');
+            selectedUser = tab.dataset.user;
+            listenToChat(selectedUser);
+            listenToAll();
+            document.getElementById('sidebar').classList.remove('open');
+        }
+    });
+
+    function listenToAll() {
+        onValue(ref(db, 'chats/'), (snap) => {
+            const list = document.getElementById('userList');
+            list.innerHTML = "";
+            const data = snap.val();
+            if(data) Object.keys(data).forEach(user => {
+                const div = document.createElement('div');
+                div.className = `user-tab ${selectedUser === user ? 'active' : ''}`;
+                div.dataset.user = user;
+                div.innerHTML = `<span>${user}</span> <i class="fas fa-trash del-chat" data-user="${user}"></i>`;
+                list.appendChild(div);
+            });
+        });
+    }
+
+    function listenToChat(user) {
+        onValue(ref(db, 'chats/' + user), (snap) => {
+            const display = document.getElementById('msgDisplay');
+            
+            // Basic check to see if we should play sound (new message arrived)
+            const newCount = snap.val() ? Object.keys(snap.val()).length : 0;
+            const currentCount = display.childElementCount;
+            if(newCount > currentCount && currentCount > 0) {
+                 // Only play if it wasn't us sending it just now (simple check)
+                 // For now, playing on all incoming for feedback is good
+                 playSound(); 
+            }
+
+            display.innerHTML = "";
+            const messages = snap.val();
+            if(messages) Object.keys(messages).forEach(key => {
+                const m = messages[key];
+                if(m.text) {
+                    const div = document.createElement('div');
+                    div.className = `bubble ${m.sender}`;
+                    div.innerHTML = `${m.text} <div style="font-size:0.6rem; opacity:0.3; text-align:right;">${m.read ? '✓✓' : '✓'}</div>`;
+                    display.appendChild(div);
+                    if(isAdmin && !m.read) update(ref(db, `chats/${user}/${key}`), { read: true });
+                }
+            });
+            display.scrollTop = display.scrollHeight;
+        });
+    }
+
+    window.onload = () => setTimeout(() => document.getElementById('loader').style.display = 'none', 1000);
+</script>
+</body>
+</html>
